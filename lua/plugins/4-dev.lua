@@ -53,7 +53,7 @@ return {
       "zeioth/NormalSnippets",
       "benfowler/telescope-luasnip.nvim",
     },
-    event = "User BaseFile",
+    event = "InsertEnter",
     opts = {
       history = true,
       delete_check_events = "TextChanged",
@@ -149,7 +149,6 @@ return {
   --  https://github.com/stevearc/aerial.nvim
   {
     "stevearc/aerial.nvim",
-    event = "User BaseFile",
     opts = {
       filter_kind = { -- Symbols that will appear on the tree
         -- "Class",
@@ -216,7 +215,6 @@ return {
   -- press ? inside the panel to show help.
   {
     'ldelossa/litee.nvim',
-    event = "User BaseFile",
     opts = {
       notify = { enabled = false },
       tree = {
@@ -234,7 +232,6 @@ return {
   {
     'ldelossa/litee-calltree.nvim',
     dependencies = 'ldelossa/litee.nvim',
-    event = "User BaseFile",
     opts = {
       on_open = "panel", -- or popout
       map_resize_keys = false,
@@ -347,7 +344,7 @@ return {
   --  Then you must run :Copilot auth
   {
     "zbirenbaum/copilot.lua",
-    event = "User BaseFile",
+    event = "User BaseDefered",
     opts = {},
   },
 
@@ -427,7 +424,6 @@ return {
   {
     "mfussenegger/nvim-dap",
     enabled = vim.fn.has "win32" == 0,
-    event = "User BaseFile",
     config = function()
       local dap = require("dap")
 

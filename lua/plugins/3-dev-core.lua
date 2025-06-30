@@ -327,7 +327,7 @@ return {
   --  https://github.com/zeioth/garbage-day.nvim
   {
     "zeioth/garbage-day.nvim",
-    event = "User BaseFile",
+    event = "User BaseDefered",
     opts = {
       aggressive_mode = false,
       excluded_lsp_clients = {

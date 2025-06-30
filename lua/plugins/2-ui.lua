@@ -336,10 +336,10 @@ return {
                   buftype = { "terminal", "prompt", "nofile", "help", "quickfix" },
                   filetype = {
                     "NvimTree",
-                    "neo%-tree",
+                    -- "neo%-tree", -- Removed
                     "dashboard",
-                    "Outline",
-                    "aerial",
+                    -- "Outline",   -- Removed (related to aerial)
+                    -- "aerial",    -- Removed
                     "rnvimr",
                     "yazi"
                   },
@@ -360,22 +360,20 @@ return {
           {
             condition = function() return not lib.condition.is_active() end,
             {
-              lib.component.neotree(),
               lib.component.compiler_play(),
               lib.component.fill(),
               lib.component.compiler_redo(),
-              lib.component.aerial(),
+              -- lib.component.aerial(), -- Removed
             },
           },
           -- Regular winbar
           {
-            lib.component.neotree(),
             lib.component.compiler_play(),
             lib.component.fill(),
             lib.component.breadcrumbs(),
             lib.component.fill(),
             lib.component.compiler_redo(),
-            lib.component.aerial(),
+            -- lib.component.aerial(), -- Removed
           }
         },
         statuscolumn = { -- UI left column
@@ -604,28 +602,6 @@ return {
     config = function(_, opts)
       require("lspkind").init(opts)
     end,
-  },
-
-  --  nvim-scrollbar [scrollbar]
-  --  https://github.com/petertriho/nvim-scrollbar
-  {
-    "petertriho/nvim-scrollbar",
-    event = "User BaseFile",
-    opts = {
-      handlers = {
-        gitsigns = true, -- gitsigns integration (display hunks)
-        ale = true,      -- lsp integration (display errors/warnings)
-        search = false,  -- hlslens integration (display search result)
-      },
-      excluded_filetypes = {
-        "cmp_docs",
-        "cmp_menu",
-        "noice",
-        "prompt",
-        "TelescopePrompt",
-        "alpha"
-      },
-    },
   },
 
   --  mini.animate [animations]

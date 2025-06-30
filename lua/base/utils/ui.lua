@@ -87,22 +87,6 @@ function M.toggle_autoformat()
   utils.notify(string.format("Global autoformatting %s", bool2str(vim.g.autoformat_enabled)))
 end
 
---- Toggle autopairs
-function M.toggle_autopairs()
-  local ok, autopairs = pcall(require, "nvim-autopairs")
-  if ok then
-    if autopairs.state.disabled then
-      autopairs.enable()
-    else
-      autopairs.disable()
-    end
-    vim.g.autopairs_enabled = autopairs.state.disabled
-    utils.notify(string.format("autopairs %s", bool2str(not autopairs.state.disabled)))
-  else
-    utils.notify "autopairs not available"
-  end
-end
-
 --- Toggle background="dark"|"light"
 function M.toggle_background()
   vim.go.background = vim.go.background == "light" and "dark" or "light"

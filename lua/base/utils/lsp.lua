@@ -56,7 +56,7 @@ M.apply_default_lsp_settings = function()
       },
       active = signs,
     },
-    update_in_insert = true,
+    update_in_insert = false, -- Changed from true
     underline = true,
     severity_sort = true,
     float = {
@@ -171,11 +171,8 @@ M.setup = function(server)
   -- Get the user settings.
   local opts = M.apply_user_lsp_settings(server)
 
-  -- Get a handler from lspconfig.
-  local setup_handler = stored_handlers[server] or require("lspconfig")[server].setup(opts)
-
-  -- Apply our user settings to the lspconfig handler.
-  if setup_handler then setup_handler(server, opts) end
+  -- Configure the server using lspconfig
+  require("lspconfig")[server].setup(opts)
 end
 
 return M
