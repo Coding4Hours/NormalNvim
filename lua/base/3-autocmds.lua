@@ -35,16 +35,22 @@ autocmd({ "BufReadPost", "BufNewFile", "BufWritePost" }, {
   callback = function(args)
     local empty_buffer = vim.fn.resolve(vim.fn.expand "%") == ""
     local greeter = vim.api.nvim_get_option_value("filetype", { buf = args.buf }) == "alpha"
-    local git_repo = vim.fn.executable("git") == 1 and utils.run_cmd(
-      { "git", "-C", vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand "%"), ":p:h"), "rev-parse" }, false)
 
-    -- For any file exept empty buffer, or the greeter (alpha)
     if not (empty_buffer or greeter) then
       utils.trigger_event("User BaseFile")
 
-      -- Is the buffer part of a git repo?
-      if git_repo then
-        utils.trigger_event("User BaseGitFile")
+      -- Check if we've already processed BaseGitFile for this buffer
+      if vim.b[args.buf].git_repo_checked == nil then
+        local git_exe_available = vim.fn.executable("git") == 1
+        if git_exe_available then
+          -- Try to get git root without running rev-parse immediately for all events
+          -- This is a lighter check. Plugins needing full rev-parse can do it themselves.
+          local git_dir = vim.fn.finddir(".git", vim.fn.fnamemodify(vim.fn.resolve(vim.fn.expand "%"), ":p:h") .. ";")
+          if git_dir ~= "" and git_dir ~= nil then
+            utils.trigger_event("User BaseGitFile")
+          end
+        end
+        vim.b[args.buf].git_repo_checked = true -- Mark as checked
       end
     end
   end,
@@ -160,29 +166,6 @@ if is_available "alpha-nvim" then
   })
 end
 
--- 4. Update neotree when closing the git client.
-if is_available "neo-tree.nvim" then
-  autocmd("TermClose", {
-    pattern = { "*lazygit", "*gitui" },
-    desc = "Refresh Neo-Tree git when closing lazygit/gitui",
-    callback = function()
-      local manager_avail, manager = pcall(require, "neo-tree.sources.manager")
-      if manager_avail then
-        for _, source in ipairs {
-          "filesystem",
-          "git_status",
-          "document_symbols",
-        } do
-          local module = "neo-tree.sources." .. source
-          if package.loaded[module] then
-            manager.refresh(require(module).name)
-          end
-        end
-      end
-    end,
-  })
-end
-
 -- 5. Create parent directories when saving a file.
 autocmd("BufWritePre", {
   desc = "Automatically create parent directories if they don't exist when saving a file",
@@ -202,7 +185,14 @@ autocmd("BufWritePre", {
 vim.api.nvim_set_hl(0, 'HighlightURL', { underline = true })
 autocmd({ "VimEnter", "FileType", "BufEnter", "WinEnter" }, {
   desc = "URL Highlighting",
-  callback = function() utils.set_url_effect() end,
+  callback = function()
+    if vim.g.url_effect_enabled then -- Check the global toggle first
+      utils.set_url_effect()
+    else
+      -- If the effect was previously enabled and is now disabled, ensure cleanup
+      utils.delete_url_effect()
+    end
+  end,
 })
 
 -- 7. Customize right click contextual menu.

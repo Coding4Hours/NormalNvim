@@ -435,9 +435,7 @@ end
 
 -- ui toggles [ui] ---------------------------------------------------------
 maps.n["<leader>u"] = icons.u
-if is_available("nvim-autopairs") then
-  maps.n["<leader>ua"] = { ui.toggle_autopairs, desc = "Autopairs" }
-end
+-- Nico: autopairs mapping removed as mini.pairs is always on or configured differently for disabling
 maps.n["<leader>ub"] = { ui.toggle_background, desc = "Background" }
 if is_available("nvim-cmp") then
   maps.n["<leader>uc"] = { ui.toggle_cmp, desc = "Autocompletion" }
@@ -559,13 +557,13 @@ vim.api.nvim_create_autocmd("CmdwinEnter", {
 if is_available("alpha-nvim") then
   maps.n["<leader>h"] = {
     function()
-      local wins = vim.api.nvim_tabpage_list_wins(0)
-      if #wins > 1
-          and vim.api.nvim_get_option_value("filetype", { win = wins[1] })
-          == "neo-tree"
-      then
-        vim.fn.win_gotoid(wins[2]) -- go to non-neo-tree window to toggle alpha
-      end
+      -- local wins = vim.api.nvim_tabpage_list_wins(0)
+      -- if #wins > 1
+      --     and vim.api.nvim_get_option_value("filetype", { win = wins[1] })
+      --     == "neo-tree" -- This check might need adjustment for mini.files if similar issue arises
+      -- then
+      --   vim.fn.win_gotoid(wins[2]) -- go to non-neo-tree window to toggle alpha
+      -- end
       require("alpha").start(false, require("alpha").default_config)
       vim.b.miniindentscope_disable = true
     end,
@@ -670,8 +668,10 @@ if is_available("yazi.nvim") and vim.fn.executable("yazi") == 1 then
   }
 end
 
--- neotree
-if is_available("neo-tree.nvim") then
+-- neotree / mini.files
+if is_available("mini.files") then
+  maps.n["<leader>e"] = { function() MiniFiles.open() end, desc = "Files (mini.files)" }
+elseif is_available("neo-tree.nvim") then
   maps.n["<leader>e"] = { "<cmd>Neotree toggle<cr>", desc = "Neotree" }
 end
 
